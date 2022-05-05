@@ -21,6 +21,18 @@ export class SubmitFeedbackUseCase {
       screenshot,
     });
 
+    if (!type) {
+      throw new Error('Type is Required');
+    }
+
+    if (!comment) {
+      throw new Error('Comment is Required');
+    }
+
+    if (screenshot && !screenshot.startsWith('data:image/png;base64')) {
+      throw new Error('Invalid screenshot format.');
+    }
+
     await this.mailAdapter.sendEmail({
       subject: "Novo feedback",
       body: [
