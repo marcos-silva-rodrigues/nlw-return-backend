@@ -1,18 +1,22 @@
 import nodemailer from "nodemailer";
+import Mail from "nodemailer/lib/mailer";
 import { MailAdapter, SendMailData } from "../mail-adapter";
 
-const transport = nodemailer.createTransport({
-  host: process.env.EMAIL_HOST!,
-  port: Number(process.env.EMAIL_PORT!),
-  auth: {
-    user: process.env.EMAIL_USER!,
-    pass: process.env.EMAIL_PASS!,
-  },
-});
-
 export class NodeMailerMailAdapter implements MailAdapter {
+  private emailService: Mail | null = null;
+
+  constructor() {
+    this.emailService = nodemailer.createTransport({
+      host: String(process.env.EMAIL_HOST!),
+      port: Number(process.env.EMAIL_PORT!),
+      auth: {
+        user: String(process.env.EMAIL_USER!),
+        pass: String(process.env.EMAIL_PASS!),
+      },
+    });
+  }
   async sendEmail({ body, subject }: SendMailData) {
-    await transport.sendMail({
+    await this.emailService?.sendMail({
       from: "Marcos <marcos.rodrigues.dev@gmail.com>",
       to: "Kaue <kauetoll3@gmail.com>",
       html: body,
